@@ -13,17 +13,55 @@ Không yêu cầu toán học — hãy giải thích về mặt khái niệm:
 - Đưa ra một ví dụ cụ thể về hai câu sẽ có độ tương tự CAO và hai câu sẽ có độ tương tự THẤP.
 - Tại sao độ tương tự cosine lại được ưu tiên hơn khoảng cách Euclid (Euclidean distance) đối với text embeddings?
 
-> **Ghi kết quả vào:** Báo cáo — Phần 1 (Khởi động)
+> Cosine Similarity đo mức độ giống nhau về mặt ý nghĩa giữa hai đoạn văn bản. Cosine Similarity cao → hai đoạn văn có nội dung hoặc ý nghĩa gần giống nhau.
+Cosine Similarity thấp → hai đoạn văn có nội dung hoặc ý nghĩa khác nhau nhiều. Trong các hệ thống RAG, văn bản thường được chuyển thành embedding rồi sử dụng Cosine Similarity để tìm những đoạn tài liệu có ý nghĩa gần với câu hỏi của người dùng.
+
 
 ---
 
-### Bài tập 1.2 — Bài toán tính toán Chunking
+## Bài tập 1.2 — Bài toán tính toán Chunking
 
-- Một tài liệu có độ dài 10,000 ký tự. Bạn tiến hành chia nhỏ (chunk) với `chunk_size=500` (kích thước chunk), `overlap=50` (độ chồng chéo). Bạn dự kiến sẽ có bao nhiêu chunks?
-- Công thức: `số lượng chunk = làm_tròn_lên((độ_dài_tài_liệu - độ_chồng_chéo) / (kích_thước_chunk - độ_chồng_chéo))`
-- Nếu độ chồng chéo (overlap) tăng lên 100, số lượng chunk sẽ thay đổi như thế nào? Tại sao bạn lại muốn tăng độ chồng chéo?
+* Một tài liệu có độ dài **10,000 ký tự**. Bạn tiến hành chia nhỏ (chunk) với `chunk_size=500` (kích thước chunk), `overlap=50` (độ chồng chéo). Bạn dự kiến sẽ có bao nhiêu chunks?
+* Công thức: `số lượng chunk = làm_tròn_lên((độ_dài_tài_liệu - độ_chồng_chéo) / (kích_thước_chunk - độ_chồng_chéo))`
+* Nếu độ chồng chéo (`overlap`) tăng lên **100**, số lượng chunk sẽ thay đổi như thế nào? Tại sao bạn lại muốn tăng độ chồng chéo?
 
-> **Ghi kết quả vào:** Báo cáo — Phần 1 (Khởi động)
+### 1. Với `chunk_size=500`, `overlap=50`
+
+Công thức:
+
+```text
+số lượng chunk = ceil((độ dài tài liệu - overlap) / (chunk_size - overlap))
+```
+
+Thay số:
+
+```text
+= ceil((10000 - 50) / (500 - 50))
+= ceil(9950 / 450)
+= ceil(22.11...)
+= 23
+```
+
+**Kết quả: 23 chunks.**
+
+### 2. Khi tăng `overlap` lên 100
+
+```text
+= ceil((10000 - 100) / (500 - 100))
+= ceil(9900 / 400)
+= ceil(24.75)
+= 25
+```
+
+**Kết quả: 25 chunks.**
+
+### 3. Tại sao muốn tăng độ chồng chéo?
+
+`Overlap` giúp giữ lại một phần nội dung giữa hai chunk liên tiếp.
+
+Ví dụ, nếu một câu hoặc một ý quan trọng nằm ngay tại ranh giới giữa hai chunk, việc tăng `overlap` giúp nội dung đó xuất hiện ở cả hai chunk. Nhờ đó, mỗi chunk giữ được nhiều ngữ cảnh hơn và giảm nguy cơ mất thông tin khi chia nhỏ tài liệu.
+
+Tuy nhiên, `overlap` càng lớn thì số lượng chunk càng tăng, dẫn đến việc tốn thêm dung lượng lưu trữ, thời gian xử lý và chi phí tạo embedding.
 
 ---
 
